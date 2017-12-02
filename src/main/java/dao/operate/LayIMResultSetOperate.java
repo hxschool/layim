@@ -1,17 +1,24 @@
 package dao.operate;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import dao.db.IResultSetOperate;
-import net.sourceforge.jtds.jdbc.JtdsPreparedStatement;
-import pojo.*;
+import pojo.BigGroup;
+import pojo.FriendGroup;
+import pojo.JsonResultType;
+import pojo.StatusUser;
+import pojo.User;
 import pojo.result.BaseDataResult;
 import pojo.result.GroupMemberResult;
 import pojo.result.JsonResult;
 import pojo.result.JsonResultHelper;
 import util.log.LayIMLog;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by pz on 16/11/25.
@@ -54,7 +61,7 @@ public class LayIMResultSetOperate implements IResultSetOperate {
 
     //获取基本信息列表的方法，比较繁琐，应该有更好的业务处理方式
     public Object getObject(Statement statement) {
-        JtdsPreparedStatement jtdsPreparedStatement = (JtdsPreparedStatement) statement;
+    	PreparedStatement jtdsPreparedStatement = (PreparedStatement) statement;
         JsonResult jsonResult = new JsonResult();
         BaseDataResult result = new BaseDataResult();
         try {
@@ -74,24 +81,36 @@ public class LayIMResultSetOperate implements IResultSetOperate {
                 result.setMine(mine);
                 //2 3 4 分别为 用户分组， 用户分组详细，群组信息
                 int i = 0;
-
-                while (jtdsPreparedStatement.getMoreResults()) {
-                    ResultSet resultSet = jtdsPreparedStatement.getResultSet();
-                    //好友分组
-                    if (i == 0) {
-                        friendGroups = getFriendGroupList(resultSet);
-                    }
-                    //好友列表
-                    if (i == 1) {
-                        users = getFriendGroupDetailUser(resultSet);
-                    }
-                    //群组分组
-                    if (i == 2) {
-                        //群组信息
-                        groups = getGroups(resultSet);
-                    }
-                    i++;
-                }
+                
+                
+               String sql = "select * from v_group where uid="+mine.getId();
+               Connection connection =  statement.getConnection();
+              
+               ResultSet resultSet = connection.createStatement().executeQuery(sql);
+               friendGroups = getFriendGroupList(resultSet);
+               sql = "select a.fgid,a.id,'' as ce,a.username,a.sign,a.avatar from user a left join v_user_detail b on a.id=b.fid where b.uid="+mine.getId();
+               resultSet = connection.createStatement().executeQuery(sql);
+               users = getFriendGroupDetailUser(resultSet);
+               sql ="SELECT a.* FROM v_big_group a left join v_group b on a.id=b.gid where uid="+mine.getId();
+               resultSet = connection.createStatement().executeQuery(sql);
+               groups = getGroups(resultSet);
+//                while (jtdsPreparedStatement.getMoreResults()) {
+//                    ResultSet resultSet = jtdsPreparedStatement.getResultSet();
+//                    //好友分组
+//                    if (i == 0) {
+//                        friendGroups = getFriendGroupList(resultSet);
+//                    }
+//                    //好友列表
+//                    if (i == 1) {
+//                        users = getFriendGroupDetailUser(resultSet);
+//                    }
+//                    //群组分组
+//                    if (i == 2) {
+//                        //群组信息
+//                        groups = getGroups(resultSet);
+//                    }
+//                    i++;
+//                }
 
                 friendGroups = getFriendGroupList(friendGroups, users);
                 result.setFriend(friendGroups);

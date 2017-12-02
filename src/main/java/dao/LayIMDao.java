@@ -26,7 +26,8 @@ public class LayIMDao {
         }
         Map params = new HashMap();
         params.put(1, userId);
-        Object object = sqlHelper.QueryResult("SELECT A.gid,A.uid,A.nickname,A.sign,A.headphoto,IFNULL(b.uid,10) as ownerid   FROM  v_group_detail A left join V_group B on A.gid=B.gid and A.uid=B.uid where A.uid=?", params, new LayIMResultSetOperate());
+        Object object = sqlHelper.QueryManyResult("SELECT A.gid,A.uid,A.nickname,A.sign,A.headphoto,IFNULL(b.uid,0) as ownerid   FROM  v_group_detail A left join V_group B on A.gid=B.gid and A.uid=B.uid where A.uid=?", params, new LayIMResultSetOperate());
+       // Object object = sqlHelper.QueryManyResultWithProcedure("Proc_LayIM_GetUserInitInfo(?)", params, new LayIMResultSetOperate());
         return (JsonResult)object;
     }
 
@@ -37,7 +38,7 @@ public class LayIMDao {
         }
         Map params = new HashMap();
         params.put(1,groupId);
-        String sql = "SELECT A.gid,A.uid,A.nickname,A.sign,A.headphoto,IFNULL(b.uid,10) as ownerid   FROM  v_group_detail A left join V_group B on A.gid=B.gid and A.uid=B.uid where A.gid=?";
+        String sql = "SELECT A.gid,A.uid,A.nickname,A.sign,A.headphoto,IFNULL(b.uid,0) as ownerid   FROM  v_group_detail A left join V_group B on A.gid=B.gid and A.uid=B.uid where A.gid=?";
         Object object = sqlHelper.QueryResult(sql,params,new LayIMResultSetOperate());
         return (JsonResult)object;
     }

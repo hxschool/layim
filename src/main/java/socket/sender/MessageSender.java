@@ -1,5 +1,10 @@
 package socket.sender;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.websocket.Session;
+
 import dao.LayIMDao;
 import pojo.SocketUser;
 import pojo.message.ToClientTextMessage;
@@ -12,11 +17,6 @@ import socket.LayIMChatType;
 import socket.manager.GroupUserManager;
 import util.LayIMFactory;
 import util.log.LayIMLog;
-
-import javax.websocket.Session;
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 发送信息类

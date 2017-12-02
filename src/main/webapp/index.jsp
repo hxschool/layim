@@ -107,7 +107,7 @@
       //查看群员接口
       ,members: {
         url: '/layim/api?action=member'
-        ,data: {}
+        ,data: {id: im.getUid()}
       }
 
       ,uploadImage: {
