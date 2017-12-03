@@ -26,7 +26,7 @@ public class LayIMDao {
         }
         Map params = new HashMap();
         params.put(1, userId);
-        Object object = sqlHelper.QueryManyResult("SELECT A.gid,A.uid,A.nickname,A.sign,A.headphoto,IFNULL(b.uid,0) as ownerid   FROM  v_group_detail A left join V_group B on A.gid=B.gid and A.uid=B.uid where A.uid=?", params, new LayIMResultSetOperate());
+        Object object = sqlHelper.QueryManyResult("SELECT A.id,A.username,A.sign,A.Avatar  FROM  user A WHERE A.id=?", params, new LayIMResultSetOperate());
        // Object object = sqlHelper.QueryManyResultWithProcedure("Proc_LayIM_GetUserInitInfo(?)", params, new LayIMResultSetOperate());
         return (JsonResult)object;
     }

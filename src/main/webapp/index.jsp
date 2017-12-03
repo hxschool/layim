@@ -15,7 +15,7 @@
 <body>
 
 <div style="margin: 300px auto; text-align: center; font-size: 20px;">
-  <a href="http://layim.layui.com/demo.html">前去看官方演示</a>
+
 </div>
 
 <script>
@@ -32,7 +32,7 @@
                 if(!uid){
                     console.log('当前用户未登陆，应该跳到login');
                 }else {
-                    var socketUrl = 'ws://localhost:8080/layim/websocket/'+ uid;
+                    var socketUrl = 'ws://chat.tunnel.qydev.com/layim/websocket/'+ uid;
                     socket = new WebSocket(socketUrl);
                     im.startListener();
                 }
@@ -61,8 +61,8 @@
                 }
             }
         },
-        handleMessage:function (msg) {
-            var msg = JSON.parse(event.data);
+        handleMessage:function (data) {
+            var msg = JSON.parse(data);
             console.log(msg);
             switch (msg.type){
                 case 'TYPE_TEXT_MESSAGE':

@@ -83,7 +83,7 @@ public class LayIMResultSetOperate implements IResultSetOperate {
                 int i = 0;
                 
                 
-               String sql = "select * from v_group where uid="+mine.getId();
+               String sql = "select gid,groupname from v_group where uid="+mine.getId();
                Connection connection =  statement.getConnection();
               
                ResultSet resultSet = connection.createStatement().executeQuery(sql);
@@ -91,7 +91,7 @@ public class LayIMResultSetOperate implements IResultSetOperate {
                sql = "select a.fgid,a.id,'' as ce,a.username,a.sign,a.avatar from user a left join v_user_detail b on a.id=b.fid where b.uid="+mine.getId();
                resultSet = connection.createStatement().executeQuery(sql);
                users = getFriendGroupDetailUser(resultSet);
-               sql ="SELECT a.* FROM v_big_group a left join v_group b on a.id=b.gid where uid="+mine.getId();
+               sql ="SELECT a.id,a.groupname,a.avatar FROM v_big_group a left join v_group b on a.id=b.gid where uid="+mine.getId();
                resultSet = connection.createStatement().executeQuery(sql);
                groups = getGroups(resultSet);
 //                while (jtdsPreparedStatement.getMoreResults()) {
