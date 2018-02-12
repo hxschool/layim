@@ -14,20 +14,23 @@ public class SocketUser {
         this.session = session;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
     public boolean isExist(){
-        return this.userId > 0;
+    	if(this.userId!=null&&!this.userId.equals("")) {
+    		return true;
+    	}
+        return false;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
     private Session session;
-    private int userId;
+    private String userId;
 
     @Override
     public String toString() {

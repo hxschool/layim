@@ -29,9 +29,9 @@ public class MessageSender {
     //发送信息业务逻辑
     public void sendMessage(ToServerTextMessage message){
 
-        int toUserId = message.getTo().getId();
+    	String toUserId = message.getTo().getId();
         //获取发送人
-        String sendUserId = Integer.toString(message.getMine().getId());
+        String sendUserId = message.getMine().getId();
         String type =  message.getTo().getType();
         //消息提前生成，否则进行循环内生成会浪费资源
         String toClientMessage = getToClientMessage(message);
@@ -45,7 +45,7 @@ public class MessageSender {
             for (String userid : users) {
                 //遍历发送消息 自己过滤，不给自己发送(发送人id和群成员内的某个id相同)
                 if (!sendUserId.equals(userid)) {
-                    sendMessage(Integer.parseInt(userid), toClientMessage);
+                    sendMessage(userid, toClientMessage);
                 }
             }
         }else {
@@ -58,7 +58,7 @@ public class MessageSender {
     }
 
     //给单个用户发
-    private  void sendMessage(Integer userId,String message){
+    private  void sendMessage(String userId,String message){
         SocketUser user = LayIMFactory.createManager().getUser(userId);
         if (user.isExist()) {
             if (user.getSession() == null) {
@@ -84,7 +84,7 @@ public class MessageSender {
         dbMessage.setAddtime(new Date().getTime());
         dbMessage.setChatType( message.getTo().getType().equals(LayIMChatType.FRIEND) ? LayIMChatType.CHATFRIEND:LayIMChatType.CHATGROUP);
         dbMessage.setMsgType(1);//这个参数先不管就是普通聊天记录
-        long groupId = getGroupId(message.getMine().getId(),message.getTo().getId(),message.getTo().getType());
+        String groupId = getGroupId(message.getMine().getId(),message.getTo().getId(),message.getTo().getType());
         dbMessage.setGroupId(groupId);
         dbMessage.setMsg(message.getMine().getContent());
 
@@ -130,7 +130,7 @@ public class MessageSender {
     }
 
     //生成对应的groupId
-    private long getGroupId(int sendUserId,int toUserId,String type){
+    private String getGroupId(String sendUserId,String toUserId,String type){
 
         //如果是组内聊天，直接返回组id，否则返回 两个id的组合
         if (type.equals(LayIMChatType.GROUP)){
@@ -138,18 +138,19 @@ public class MessageSender {
         }
 
 
-        String sendUserIdStr = Integer.toString(sendUserId);
-        String toUserIdStr = Integer.toString(toUserId);
+        String sendUserIdStr = sendUserId;
+        String toUserIdStr = toUserId;
 
         String groupIdStr = "";
         //按照固定次序生成相应的聊天组
-        if (sendUserId > toUserId){
-            groupIdStr = sendUserIdStr + toUserIdStr;
-        }else{
-            groupIdStr = toUserIdStr + sendUserIdStr;
-        }
+        groupIdStr = sendUserIdStr + toUserIdStr;
+//        if (sendUserId > toUserId){
+//            groupIdStr = sendUserIdStr + toUserIdStr;
+//        }else{
+//            groupIdStr = toUserIdStr + sendUserIdStr;
+//        }
 
-        long groupId = Long.parseLong(groupIdStr);
+        String groupId = groupIdStr;
         return groupId;
     }
 }

@@ -1,25 +1,22 @@
 package pojo.message;
 
-
-import java.util.Date;
-
 /**
  * Created by pz on 16/11/29.
  */
 public class ToDBMessage {
-    public int getSendUserId() {
+    public String getSendUserId() {
         return sendUserId;
     }
 
-    public void setSendUserId(int sendUserId) {
+    public void setSendUserId(String sendUserId) {
         this.sendUserId = sendUserId;
     }
 
-    public long getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(long groupId) {
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 
@@ -55,8 +52,8 @@ public class ToDBMessage {
         this.msgType = msgType;
     }
 
-    private int sendUserId;
-    private long groupId;
+    private String sendUserId;
+    private String groupId;
     private String msg;
     private int chatType;
     private long addTime;

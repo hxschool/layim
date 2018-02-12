@@ -17,7 +17,7 @@ import javax.websocket.server.ServerEndpoint;
 public class LayIMServer {
 
     @OnOpen
-    public  void open(Session session, @PathParam("uid") int uid){
+    public  void open(Session session, @PathParam("uid") String uid){
         SocketUser user = new SocketUser();
         user.setSession(session);
         user.setUserId(uid);
@@ -55,7 +55,7 @@ public class LayIMServer {
 
         SocketUser user = new SocketUser();
         user.setSession(session);
-        user.setUserId(0);
+        user.setUserId("");
         print("用户掉线");
         //移除该用户
         LayIMFactory.createManager().removeUser(user);

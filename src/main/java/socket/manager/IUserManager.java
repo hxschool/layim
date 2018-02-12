@@ -15,6 +15,6 @@ public interface IUserManager {
 
     int getOnlineCount();
 
-    SocketUser getUser(int userId);
+    SocketUser getUser(String userId);
 
 }

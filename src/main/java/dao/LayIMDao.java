@@ -4,6 +4,7 @@ package dao;
 import dao.operate.LayIMGetMemberIdsOperate;
 import dao.operate.LayIMResultSetOperate;
 import dao.db.SQLHelper;
+import pojo.User;
 import pojo.message.ToDBMessage;
 import pojo.result.JsonResult;
 import pojo.result.JsonResultHelper;
@@ -19,36 +20,37 @@ public class LayIMDao {
 
     SQLHelper sqlHelper = new SQLHelper();
     //获取基本信息列表
-    public JsonResult getBaseList(int userId) {
+    public JsonResult getBaseList(String userId) {
 
-        if (userId == 0){
+        if (userId==null||userId.equals("")||userId.equals("0")){
             return JsonResultHelper.createFailedResult("invalid userid");
         }
         Map params = new HashMap();
         params.put(1, userId);
-        Object object = sqlHelper.QueryManyResult("SELECT A.id,A.username,A.sign,A.Avatar  FROM  user A WHERE A.id=?", params, new LayIMResultSetOperate());
-       // Object object = sqlHelper.QueryManyResultWithProcedure("Proc_LayIM_GetUserInitInfo(?)", params, new LayIMResultSetOperate());
+        Object object = sqlHelper.QueryManyResult("SELECT A.id,A.username,A.sign,A.Avatar  FROM  chat_user A WHERE A.id=?", params, new LayIMResultSetOperate());
         return (JsonResult)object;
     }
 
     //根据groupid获取群员列表
-    public JsonResult getMemberList(int groupId){
-        if (groupId == 0){
+    public JsonResult getMemberList(String groupId){
+        if (groupId==null ||  groupId.equals("") || groupId.equals("0")){
             return JsonResultHelper.createFailedResult("invalid groupId");
         }
         Map params = new HashMap();
         params.put(1,groupId);
-        String sql = "SELECT A.gid,A.uid,A.nickname,A.sign,A.headphoto,IFNULL(b.uid,0) as ownerid   FROM  v_group_detail A left join V_group B on A.gid=B.gid and A.uid=B.uid where A.gid=?";
+        //String sql = "SELECT A.gid,A.uid,A.nickname,A.sign,A.headphoto,IFNULL(b.uid,0) as ownerid   FROM  v_group_detail A left join V_group B on A.gid=B.gid and A.uid=B.uid where A.gid=?";
+        String sql = "select a.id,a.username,a.sign,a.avatar,a.fgid from chat_user a left join chat_user_group b on a.id=b.uid where b.gid=?";
+        
         Object object = sqlHelper.QueryResult(sql,params,new LayIMResultSetOperate());
         return (JsonResult)object;
     }
 
     //根据群id获取所有群员的id
-    public List<String> getMemberListOnlyIds(int groupId){
+    public List<String> getMemberListOnlyIds(String groupId){
         Map params = new HashMap();
         params.put(1,groupId);
 
-        String sql = "select uid as userid from v_layim_group_detail where gid =?";
+        String sql = "select uid as userid from chat_user_group where gid =?";
         Object object = sqlHelper.QueryResult(sql,params,new LayIMGetMemberIdsOperate());
 
         return (List<String>) object;
@@ -56,7 +58,7 @@ public class LayIMDao {
 
     //添加聊天记录
     public boolean addMsgRecord(ToDBMessage message){
-        String sql = "INSERT INTO v_layim_msg_history(fromuser, gid, msg, chattype, create_date, msgtype, message_date) VALUES(?, ?, ?, ?, now(), ?, ?)";
+        String sql = "INSERT INTO chat_msg_history(fromuser, gid, msg, chattype, create_date, msgtype, message_date) VALUES(?, ?, ?, ?, now(), ?, ?)";
         Map<Integer,Object> param = new HashMap<>();
         //加入参数
         param.put(1,message.getSendUserId());

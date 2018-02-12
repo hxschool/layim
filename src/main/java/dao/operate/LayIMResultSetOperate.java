@@ -33,16 +33,16 @@ public class LayIMResultSetOperate implements IResultSetOperate {
 
 
         try {
-            int ownerid = 0;
+            String ownerid = "0";
             while (resultSet.next()){
                 User user = new User();
-                user.setId(resultSet.getInt(2));
-                user.setUsername(resultSet.getString(3));
-                user.setSign(resultSet.getString(4));
-                user.setAvatar(resultSet.getString(5));
-                ownerid = resultSet.getInt(6);
+                user.setId(resultSet.getString(1));
+                user.setUsername(resultSet.getString(2));
+                user.setSign(resultSet.getString(3));
+                user.setAvatar(resultSet.getString(4));
+                ownerid = resultSet.getString(5);
                 //群主
-                if(ownerid > 0){
+                if(ownerid.equals(user.getId())){
                     owner = user;
                 }
                 users.add(user);
@@ -72,53 +72,30 @@ public class LayIMResultSetOperate implements IResultSetOperate {
             List<BigGroup> groups = null;
             //查询多结果集
             if (jtdsPreparedStatement.execute()) {
-                //第一个resultSet为mine的数据
-                ResultSet mineRs = jtdsPreparedStatement.getResultSet();
-                StatusUser mine = getStatusUser(mineRs);
-                if (mine.getId() == 0) {
-                    return JsonResultHelper.createFailedResult("用户不存在");
-                }
-                result.setMine(mine);
-                //2 3 4 分别为 用户分组， 用户分组详细，群组信息
-                int i = 0;
-                
-                
-               String sql = "select gid,groupname from v_group where uid="+mine.getId();
-               Connection connection =  statement.getConnection();
-              
-               ResultSet resultSet = connection.createStatement().executeQuery(sql);
-               friendGroups = getFriendGroupList(resultSet);
-               sql = "select a.fgid,a.id,'' as ce,a.username,a.sign,a.avatar from user a left join v_user_detail b on a.id=b.fid where b.uid="+mine.getId();
-               resultSet = connection.createStatement().executeQuery(sql);
-               users = getFriendGroupDetailUser(resultSet);
-               sql ="SELECT a.id,a.groupname,a.avatar FROM v_big_group a left join v_group b on a.id=b.gid where uid="+mine.getId();
-               resultSet = connection.createStatement().executeQuery(sql);
-               groups = getGroups(resultSet);
-//                while (jtdsPreparedStatement.getMoreResults()) {
-//                    ResultSet resultSet = jtdsPreparedStatement.getResultSet();
-//                    //好友分组
-//                    if (i == 0) {
-//                        friendGroups = getFriendGroupList(resultSet);
-//                    }
-//                    //好友列表
-//                    if (i == 1) {
-//                        users = getFriendGroupDetailUser(resultSet);
-//                    }
-//                    //群组分组
-//                    if (i == 2) {
-//                        //群组信息
-//                        groups = getGroups(resultSet);
-//                    }
-//                    i++;
-//                }
+				ResultSet mineRs = jtdsPreparedStatement.getResultSet();
+				StatusUser mine = getStatusUser(mineRs);
+				if (mine.getId() == null || mine.getId().equals("") || mine.getId().equals("0")) {
+					return JsonResultHelper.createFailedResult("用户不存在");
+				}
+				result.setMine(mine);
+				String sql = "select  a.id,a.groupname from chat_group a left join chat_user_group b on a.id=b.gid left join chat_user c on b.uid=c.id where b.uid="+ mine.getId();
+				Connection connection = statement.getConnection();
 
-                friendGroups = getFriendGroupList(friendGroups, users);
-                result.setFriend(friendGroups);
-                result.setGroup(groups);
+				ResultSet resultSet = connection.createStatement().executeQuery(sql);
+				friendGroups = getFriendGroupList(resultSet);
+				sql = "select a.fgid,a.id,a.username,a.sign,a.avatar from chat_user a where a.id not in (select uid from chat_friend where uid='"+ mine.getId() + "')";
+				resultSet = connection.createStatement().executeQuery(sql);
+				users = getFriendGroupDetailUser(resultSet);
+				sql = "SELECT a.id,a.groupname,a.avatar FROM chat_group a left join chat_user_group b on a.id=b.gid where b.uid="+ mine.getId();
+				resultSet = connection.createStatement().executeQuery(sql);
+				groups = getGroups(resultSet);
+				friendGroups = getFriendGroupList(friendGroups, users);
+				result.setFriend(friendGroups);
+				result.setGroup(groups);
 
-                jsonResult.setCode(JsonResultType.typeSuccess);
-                jsonResult.setData(result);
-                return jsonResult;
+				jsonResult.setCode(JsonResultType.typeSuccess);
+				jsonResult.setData(result);
+				return jsonResult;
             }
             jsonResult.setCode(JsonResultType.typeSuccess);
             return jsonResult;
@@ -136,7 +113,7 @@ public class LayIMResultSetOperate implements IResultSetOperate {
     private StatusUser getStatusUser(ResultSet rs) throws SQLException {
         StatusUser user = new StatusUser();
         while (rs.next()) {
-            user.setId(rs.getInt(1));
+            user.setId(rs.getString(1));
             user.setUsername(rs.getString(2));
             user.setSign(rs.getString(3));
             user.setAvatar(rs.getString(4));
@@ -151,7 +128,7 @@ public class LayIMResultSetOperate implements IResultSetOperate {
         while (rsGroup.next()) {
             FriendGroup friendGroup = new FriendGroup();
 
-            int gid = rsGroup.getInt(1);
+            String gid = rsGroup.getString(1);
             friendGroup.setId(gid);
             friendGroup.setGroupname(rsGroup.getString(2));
 
@@ -165,11 +142,11 @@ public class LayIMResultSetOperate implements IResultSetOperate {
 
         while (rsDetail.next()) {
             User u = new User();
-            u.setFgid(rsDetail.getInt(1));
-            u.setId(rsDetail.getInt(2));
-            u.setUsername(rsDetail.getString(4));
-            u.setSign(rsDetail.getString(5));
-            u.setAvatar(rsDetail.getString(6));
+            u.setFgid(rsDetail.getString(1));
+            u.setId(rsDetail.getString(2));
+            u.setUsername(rsDetail.getString(3));
+            u.setSign(rsDetail.getString(4));
+            u.setAvatar(rsDetail.getString(5));
             friends.add(u);
         }
         return friends;
@@ -181,7 +158,7 @@ public class LayIMResultSetOperate implements IResultSetOperate {
         for (FriendGroup fg : friendGroup){
             List<User> users = new ArrayList<>();
             for (User u : friends){
-                if (fg.getId() == u.getFgid()) {
+                if (!fg.getId().equals(u.getFgid())) {
                     users.add(u);
                 }
             }
@@ -197,7 +174,7 @@ public class LayIMResultSetOperate implements IResultSetOperate {
         List<BigGroup> bigGroups = new ArrayList<>();
         while (rsGroup.next()) {
             BigGroup group = new BigGroup();
-            group.setId(rsGroup.getInt(1));
+            group.setId(rsGroup.getString(1));
             group.setGroupname(rsGroup.getString(2));
             group.setAvatar(rsGroup.getString(3));
             bigGroups.add(group);

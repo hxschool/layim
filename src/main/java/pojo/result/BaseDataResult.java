@@ -7,35 +7,35 @@ import pojo.StatusUser;
 import java.util.List;
 
 /**
- * Created by pz on 16/11/23.
- * 这个类主要是对应于layim初始化的数据接口，里面包含mine，friend，group数据
+ * Created by pz on 16/11/23. 这个类主要是对应于layim初始化的数据接口，里面包含mine，friend，group数据
  */
 public class BaseDataResult {
-    public StatusUser getMine() {
-        return mine;
-    }
+	private StatusUser mine;
+	private List<FriendGroup> friend;
+	private List<BigGroup> group;
 
-    public void setMine(StatusUser mine) {
-        this.mine = mine;
-    }
+	public StatusUser getMine() {
+		return mine;
+	}
 
-    public List<FriendGroup> getFriend() {
-        return friend;
-    }
+	public void setMine(StatusUser mine) {
+		this.mine = mine;
+	}
 
-    public void setFriend(List<FriendGroup> friend) {
-        this.friend = friend;
-    }
+	public List<FriendGroup> getFriend() {
+		return friend;
+	}
 
-    public List<BigGroup> getGroup() {
-        return group;
-    }
+	public void setFriend(List<FriendGroup> friend) {
+		this.friend = friend;
+	}
 
-    public void setGroup(List<BigGroup> group) {
-        this.group = group;
-    }
+	public List<BigGroup> getGroup() {
+		return group;
+	}
 
-    private StatusUser mine;
-    private List<FriendGroup> friend;
-    private List<BigGroup> group;
+	public void setGroup(List<BigGroup> group) {
+		this.group = group;
+	}
+
 }

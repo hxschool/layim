@@ -1,7 +1,6 @@
 package util.log;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  * Created by pz on 16/11/23.

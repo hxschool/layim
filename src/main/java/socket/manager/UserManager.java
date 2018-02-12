@@ -1,12 +1,9 @@
 package socket.manager;
 
-import pojo.SocketUser;
-import pojo.User;
-import util.log.LayIMLog;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import pojo.SocketUser;
 
 /**
  * Created by pz on 16/11/23.
@@ -33,7 +30,7 @@ public class UserManager implements IUserManager {
 
     public boolean addUser(SocketUser user) {
 
-        String sessionUserId = Integer.toString(user.getUserId());
+        String sessionUserId = user.getUserId();
         removeUser(sessionUserId);
         socketUserMap.put(sessionUserId, user);
         //加入在线列表缓存
@@ -43,7 +40,7 @@ public class UserManager implements IUserManager {
 
 
     public boolean removeUser(SocketUser user) {
-        String sessionUserId =  Integer.toString(user.getUserId());
+        String sessionUserId =  user.getUserId();
         onLineUserManager.removeUser(sessionUserId);
         return removeUser(sessionUserId);
     }
@@ -53,8 +50,8 @@ public class UserManager implements IUserManager {
         return socketUserMap.size();
     }
 
-    public SocketUser getUser(int userId){
-        String key = Integer.toString(userId);
+    public SocketUser getUser(String userId){
+        String key = userId;
         if(socketUserMap.containsKey(key)){
             return socketUserMap.get(key);
         }

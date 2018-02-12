@@ -22,7 +22,7 @@ public class SQLHelper {
     //无参构造函数
     public SQLHelper(){
         //ip:port/dbname
-        _connectionString = "jdbc:mysql://localhost:3306/layim_db?useUnicode=true&characterEncoding=utf-8";
+        _connectionString = "jdbc:mysql://localhost:3306/laydb?useUnicode=true&characterEncoding=utf-8";
         _dbUserName = "root";
         _dbUserPwd = "";
 

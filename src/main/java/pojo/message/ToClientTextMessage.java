@@ -18,11 +18,11 @@ public class ToClientTextMessage {
         this.username = username;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -51,7 +51,7 @@ public class ToClientTextMessage {
     }
 
     private String username;
-    private int id;
+    private String id;
     private String type;
     private String content;
     private long timestamp;

@@ -6,7 +6,9 @@ import pojo.JsonResultType;
  * Created by pz on 16/11/23.
  */
 public class JsonResult {
-
+    private int code;
+    private String msg;
+    private Object data;
     public int getCode() {
         return code;
     }
@@ -32,7 +34,5 @@ public class JsonResult {
         this.data = data;
     }
 
-    private int code;
-    private String msg;
-    private Object data;
+
 }

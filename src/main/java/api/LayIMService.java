@@ -36,9 +36,9 @@ public class LayIMService extends HttpServlet {
         String action = request.getParameter("action");
         String userId = request.getParameter("id");
 
-        int userIdInt = 0;
+        String userIdInt = "0";
         if(userId != null){
-            userIdInt = Integer.parseInt(userId);
+            userIdInt = userId;
         }
         JsonResult result = new JsonResult();
         switch (action) {
@@ -46,7 +46,7 @@ public class LayIMService extends HttpServlet {
                 result = dao.getBaseList(userIdInt);
                 break;
             case RequestAction.MEMBER:
-                int groupId =Integer.parseInt(request.getParameter("id"));
+                String groupId = request.getParameter("id");
                 result = dao.getMemberList(groupId);
                 break;
             default:

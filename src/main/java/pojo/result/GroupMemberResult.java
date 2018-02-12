@@ -8,6 +8,8 @@ import java.util.List;
  * Created by pz on 16/11/28.
  */
 public class GroupMemberResult {
+    private User owner;
+    private List<User> list;
     public User getOwner() {
         return owner;
     }
@@ -23,7 +25,4 @@ public class GroupMemberResult {
     public void setList(List<User> list) {
         this.list = list;
     }
-
-    private User owner;
-    private List<User> list;
 }
